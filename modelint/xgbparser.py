@@ -232,6 +232,8 @@ class TreeEnsemble:
         groups: dict
             group variables under a common name
         """
+        if groups is None:
+            groups = {}
         p, fp, b = self.predict(x)
         features = [''] * (len(self.feat_map) + 1)
         for f, i in self.feat_map.items():
