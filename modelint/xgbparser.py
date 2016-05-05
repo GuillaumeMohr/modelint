@@ -163,7 +163,7 @@ class TreeEnsemble:
     Represents all the trees in a XGBoost model
     """
 
-    def __init__(self, feat_map=None):
+    def __init__(self, feat_map=None, base_score=0.5):
         """
         Parameters
         ----------
@@ -171,7 +171,10 @@ class TreeEnsemble:
             either a dictionary str -> int
             or an array of string
             mapping a feature name to an index
+        base_score: float
+            XGBoost model base_score
         """
+        self.bias = base_score
         self.trees = []
         if feat_map is None:
             self.feat_map = {}
@@ -221,7 +224,10 @@ class TreeEnsemble:
             preds[i] = pred
             biases[i] = bias
             feats_parts[i, :] = feats_part
-        return np.sum(preds), np.sum(feats_parts, axis=0), np.sum(biases)
+        prediction = self.bias + np.sum(preds)
+        features_parts = np.sum(feats_parts, axis=0)
+        bias = self.bias + np.sum(biases)
+        return prediction, features_parts, bias
 
     def plot_parts(self, x, groups=None):
         """ Plots individual parameter importance
