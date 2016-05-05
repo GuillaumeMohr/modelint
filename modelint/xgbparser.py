@@ -16,7 +16,7 @@ rex_node = re.compile(r'(\d+):\[(\w+)<(.*)\] yes=(\d+),no=(\d+).*cover=(\d+)')
 rex_leaf = re.compile(r'(\d+):leaf=(.*),cover=(\d+)')
 
 
-class Tree():
+class Tree:
     """
     Represents one tree, with n nodes and l leaves.
     It is constructed step by step using a list name `tree` and then,
@@ -133,7 +133,7 @@ class Tree():
         Returns
         -------
         prediction, feats_parts, bias: float, float array, float
-            prediction, features participation in it, biais
+            prediction, features participation in it, bias
         """
         i = 0
         parent_feat = -1
@@ -164,11 +164,22 @@ class TreeEnsemble:
     """
 
     def __init__(self, feat_map=None):
+        """
+        Parameters
+        ----------
+        feat_map: dictionary or str array
+            either a dictionary str -> int
+            or an array of string
+            mapping a feature name to an index
+        """
         self.trees = []
         if feat_map is None:
             self.feat_map = {}
-        else:
+        elif isinstance(feat_map, dict):
             self.feat_map = feat_map
+        else:
+            # here assume feat_map is a features array
+            self.feat_map = {f: i for i, f in enumerate(feat_map)}
 
     def load_dump(self, fname):
         with open(fname) as f:
